@@ -1,0 +1,5 @@
+-main Main
+-cp src
+-lib dconsole
+-dce no
+-js bin/Test.js

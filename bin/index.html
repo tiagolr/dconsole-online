@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta charset="utf-8"/>
+        <title>Haxe Console</title>
+        <meta name="description" content="" />
+
+        <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" href="lib/codemirror/lib/codemirror.css"/>
+        <link rel="stylesheet" href="lib/codemirror/theme/neat.css"/>
+        <link rel="stylesheet" href="lib/codemirror/addon/fold/foldgutter.css" />
+        <link rel="stylesheet" href="lib/codemirror/addon/dialog/dialog.css" />
+        <link rel="stylesheet" href="styles/jquery.terminal.css"/>
+        <link rel="stylesheet" href="styles/style.css" />
+
+    </head>
+    <body>
+
+        <div class="container-fluid">
+
+            <div class="header">
+                <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                    <!--                    <nav class="navbar navbar-inverse" role="navigation">-->
+                    <div class="container-fluid">
+                        <!-- Brand and toggle get grouped for better mobile display -->
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                            </button>
+                            <a class="navbar-brand" href="#">Haxe DConsole</a>
+                        </div>
+
+
+                        <!-- Collect the nav links, forms, and other content for toggling -->
+                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                            <ul class="nav navbar-nav">
+                                <li><a href="#" class="navbar-link"></a></p></li>
+                        <li>
+                            <div class="btn-group ">
+                                <button id="btn-run" class="btn btn-default navbar-btn">
+                                    <span class="glyphicon glyphicon-flash"></span> Run
+                                </button>
+                                <button id="btn-settings" class="btn btn-default navbar-btn disabled">
+                                    <span class="glyphicon glyphicon-cog"></span> Settings
+                                </button>
+                                <button id="btn-help" class="btn btn-default navbar-btn disabled">
+                                    <span class="glyphicon glyphicon-question-sign"></span> Help
+                                </button>
+                            </div>
+                        </li>
+                        </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#">Link</a></li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </div>  <!--                    </nav>-->
+
+
+        </div>
+    <div class="row fill-h content">
+        <div class="col-xs-6 fill-h ">
+            <textarea id="textprogram" class="fill-h">
+//--------------------------------------
+// Simple hello world example.
+//--------------------------------------
+for(i in 0...3) {
+    trace(3 - i + "...");
+}
+
+trace("Hello World!!!\n");
+            </textarea>
+        </div>
+
+        <div class="col-xs-6 fill-h">
+            <div id="textconsole">
+            </div>
+        </div>
+    </div>
+    <!--            <div class="footer">heheheheh</div>-->
+    </div>
+
+
+<!-- Scripts -->
+<script src="http://code.jquery.com/jquery-2.1.1.min.js" ></script>
+<script src="Test.js"></script>
+<script src="lib/codemirror/lib/codemirror.js"></script>
+<script src="lib/codemirror/keymap/sublime.js"></script>
+<script src="lib/codemirror/mode/haxe/haxe.js"></script>
+<script src="lib/codemirror/addon/dialog/dialog.js"></script>
+<script src="lib/codemirror/addon/wrap/hardwrap.js"></script>
+<script src="lib/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="lib/codemirror/addon/edit/closebrackets.js"></script>
+<script src="lib/bootstrap/dist/js/bootstrap.min.js" ></script>
+<script src="lib/jquery.terminal-0.8.8.min.js"></script>
+<script src="Test.js"></script>
+<script>
+    
+    var terminal;
+    var code;
+
+    $(function () {
+
+	
+        code = CodeMirror.fromTextArea($('#textprogram')[0], {
+            lineNumbers: true,
+            lineWrapping:true,
+            mode: "haxe",
+            theme: "neat"
+        });
+        
+        terminal = $('#textconsole').terminal(function(command, term) {
+            if (command !== '') {
+                pgr.dconsole.DC.eval(command);
+            } else {
+                term.echo('');
+            }
+        }, {
+            greetings: false,
+            name: 'dconsole',
+            height: "100%",
+            width: "100%",
+            prompt: '> ',
+        });
+        
+        // EVENT LISTENERS
+        document.addEventListener('console_log', function(evt) {
+            terminal.echo(evt.detail.data, {
+                finalize: function(div) {
+                    div.css("color", "#" + evt.detail.color);
+                }
+            });
+        });
+        
+        $('#btn-run').on('click', function(e) {
+            pgr.dconsole.DC.eval(code.getValue());
+        });
+        
+        document.addEventListener('console_run', function (e) { 
+            pgr.dconsole.DC.eval(code.getValue()); 
+        });
+        
+        Main.init();
+    });
+</script>
+</body>
+</html>

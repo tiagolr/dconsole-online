@@ -1,0 +1,111 @@
+.CodeMirror-wrap, .hx-options, .js-canvas
+{
+	margin-bottom:18px;
+}
+
+.CodeMirror .error {
+	background-color:#F2DEDE;
+}
+.CodeMirror {
+	line-height:1.2em;
+}
+.CodeMirror {
+	border: 1px solid #DDD;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+
+    height:100%;
+    min-height: 100%;
+    max-height: 100%;
+}
+
+/* from rubyblue */
+.CodeMirror-completions {
+	background:#fff;
+	border:4px solid #fff;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	z-index:1501;
+}
+.CodeMirror-completions select,
+.CodeMirror-completions option {
+	background:#fff;
+	color:#333;
+	font-family:monospace;	
+}
+
+html,body{
+    height:100%;
+    background-color: #eeeeee;
+}
+
+.container-fluid {
+    height:100%;
+    
+}
+
+.fill-h {
+    height: 100%;
+}
+
+.header {
+    height:65px;
+    display:block;
+}
+
+.content {
+    /* Firefox */
+    height: -moz-calc(100% - 65px);
+    /* WebKit */
+    height: -webkit-calc(100% - 65px);
+    /* Opera */
+    height: -o-calc(100% - 65px);
+    /* Standard */
+    height: calc(100% - 65px);
+}
+
+.footer {
+    height:30px;
+    display:block;
+}
+
+.fill{
+    width:100%;
+    height:100%;
+    min-height:100%;
+    background-color:#990000;
+    padding:10px;
+    color:#efefef;
+}
+
+.console-text {
+    /* Firefox */
+    height: -moz-calc(100% - 20px);
+    /* WebKit */
+    height: -webkit-calc(100% - 20px);
+    /* Opera */
+    height: -o-calc(100% - 20px);
+    /* Standard */
+    height: calc(100% - 20px);
+}
+
+.terminal, .cmd {
+    font-family: monospace;
+    color: #cccccc;
+    background-color: #353535;
+    font-size: inherit;
+    line-height: 1.2em;
+    
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px; /* future proofing */
+    -khtml-border-radius: 4px; /* for old Konqueror browsers */
+}

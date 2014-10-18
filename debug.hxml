@@ -1,6 +1,0 @@
--main Main
--cp src
--debug
--lib dconsole
--dce no
--js bin/Test.js

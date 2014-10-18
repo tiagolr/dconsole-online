@@ -1,0 +1,6 @@
+-main Main
+-cp src
+-debug
+-lib dconsole
+-dce no
+-js ..scripts/dconsole.js

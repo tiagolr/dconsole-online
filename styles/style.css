@@ -1,0 +1,123 @@
+.CodeMirror-wrap, .hx-options, .js-canvas
+{
+	margin-bottom:18px;
+}
+
+.CodeMirror .error {
+	background-color:#F2DEDE;
+}
+.CodeMirror {
+	line-height:1.2em;
+}
+.CodeMirror {
+	border: 1px solid #DDD;
+
+
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+
+
+
+    height:100%;
+    min-height: 100%;
+    max-height: 100%;
+}
+
+/* from rubyblue */
+.CodeMirror-completions {
+	background:#fff;
+	border:4px solid #fff;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	-moz-box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	box-shadow: 0 1px 1px rgba(0,0,0,0.075);
+	z-index:1501;
+}
+.CodeMirror-completions select,
+.CodeMirror-completions option {
+	background:#fff;
+	color:#333;
+	font-family:monospace;	
+}
+
+html,body{
+    height:100%;
+    background-color:#fbe8d4;
+}
+
+.container-fluid {
+    height:100%;
+    
+}
+
+.fill-h {
+    height: 100%;
+}
+
+.header {
+    /* To change header height, change .header.height and .content.height */
+    height:55px;
+    display:block;
+}
+
+.content {
+    height: -moz-calc(100% - 55px);
+    height: -webkit-calc(100% - 55px);
+    height: -o-calc(100% - 55px);
+    height: calc(100% - 55px);
+}
+
+.footer {
+    height:30px;
+    display:block;
+}
+
+.fill{
+    width:100%;
+    height:100%;
+    min-height:100%;
+    background-color:#990000;
+    padding:10px;
+    color:#efefef;
+}
+
+.code-area {
+    height: -moz-calc(100% - 5px);
+    height: -webkit-calc(100% - 5px);
+    height: -o-calc(100% - 5px);
+    height: calc(100% - 5px);
+}
+
+.terminal, .cmd {
+    font-family: monospace;
+    color: #cccccc;
+    background-color: #353535;
+    font-size: inherit;
+    line-height: 1.2em;
+/*    border: 1px solid #DDD;*/
+    
+
+
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    -khtml-border-radius: 4px;
+
+
+}
+
+.row {
+    margin-left: -12.5px;
+    margin-right: -12.5px;
+}
+
+.col-xs-6 {
+    padding-left: 2.5px;
+    padding-right: 2.5px;
+}

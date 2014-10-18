@@ -1,0 +1,19 @@
+{
+  "name": "bin",
+  "version": "0.0.0",
+  "authors": [
+    "TiagoLr <prog4mr@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "codemirror": "~4.6.0",
+    "bootstrap": "~3.2.0"
+  }
+}

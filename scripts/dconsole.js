@@ -2038,6 +2038,7 @@ hscript._Interp.Stop.SReturn = function(v) { var $x = ["SReturn",2,v]; $x.__enum
 hscript._Interp.Stop.__empty_constructs__ = [hscript._Interp.Stop.SBreak,hscript._Interp.Stop.SContinue];
 hscript.Interp = function() {
 	this.variables = new haxe.ds.StringMap();
+	this.locals = new haxe.ds.StringMap();
 	this.variables.set("null",null);
 	this.variables.set("true",true);
 	this.variables.set("false",false);
@@ -2718,6 +2719,7 @@ hscript.Token.TDoubleDot.toString = $estr;
 hscript.Token.TDoubleDot.__enum__ = hscript.Token;
 hscript.Token.__empty_constructs__ = [hscript.Token.TEof,hscript.Token.TPOpen,hscript.Token.TPClose,hscript.Token.TBrOpen,hscript.Token.TBrClose,hscript.Token.TDot,hscript.Token.TComma,hscript.Token.TSemicolon,hscript.Token.TBkOpen,hscript.Token.TBkClose,hscript.Token.TQuestion,hscript.Token.TDoubleDot];
 hscript.Parser = function() {
+	this.uid = 0;
 	this.line = 1;
 	this.opChars = "+*/-=!><&|^%~";
 	this.identChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
@@ -2761,6 +2763,7 @@ hscript.Parser.prototype = {
 	,'char': null
 	,ops: null
 	,idents: null
+	,uid: null
 	,tokens: null
 	,error: function(err,pmin,pmax) {
 		throw err;
@@ -2770,6 +2773,7 @@ hscript.Parser.prototype = {
 	}
 	,parseString: function(s) {
 		this.line = 1;
+		this.uid = 0;
 		return this.parse(new haxe.io.StringInput(s));
 	}
 	,parse: function(s) {
@@ -2981,10 +2985,59 @@ hscript.Parser.prototype = {
 				tk = this.token();
 				if(tk == hscript.Token.TComma) tk = this.token();
 			}
+			if(a1.length == 1) {
+				var _g = a1[0];
+				switch(_g[1]) {
+				case 11:case 10:
+					var tmp = "__a_" + this.uid++;
+					var e2 = this.mk(hscript.Expr.EBlock([this.mk(hscript.Expr.EVar(tmp,null,this.mk(hscript.Expr.EArrayDecl([]),0,null)),0,null),this.mapCompr(tmp,a1[0]),this.mk(hscript.Expr.EIdent(tmp),0,null)]),0,null);
+					return this.parseExprNext(e2);
+				default:
+				}
+			}
 			return this.parseExprNext(this.mk(hscript.Expr.EArrayDecl(a1),0,null));
 		default:
 			return this.unexpected(tk);
 		}
+	}
+	,mapCompr: function(tmp,e) {
+		var edef;
+		switch(e[1]) {
+		case 11:
+			var e2 = e[4];
+			var it = e[3];
+			var v = e[2];
+			edef = hscript.Expr.EFor(v,it,this.mapCompr(tmp,e2));
+			break;
+		case 10:
+			var e21 = e[3];
+			var cond = e[2];
+			edef = hscript.Expr.EWhile(cond,this.mapCompr(tmp,e21));
+			break;
+		case 9:
+			var e22 = e[4];
+			var e1 = e[3];
+			var cond1 = e[2];
+			if(e22 == null) edef = hscript.Expr.EIf(cond1,this.mapCompr(tmp,e1),null); else edef = hscript.Expr.ECall(this.mk(hscript.Expr.EField(this.mk(hscript.Expr.EIdent(tmp),0,0),"push"),0,0),[e]);
+			break;
+		case 4:
+			switch(e[2].length) {
+			case 1:
+				var e3 = e[2][0];
+				edef = hscript.Expr.EBlock([this.mapCompr(tmp,e3)]);
+				break;
+			default:
+				edef = hscript.Expr.ECall(this.mk(hscript.Expr.EField(this.mk(hscript.Expr.EIdent(tmp),0,0),"push"),0,0),[e]);
+			}
+			break;
+		case 3:
+			var e23 = e[2];
+			edef = hscript.Expr.EParent(this.mapCompr(tmp,e23));
+			break;
+		default:
+			edef = hscript.Expr.ECall(this.mk(hscript.Expr.EField(this.mk(hscript.Expr.EIdent(tmp),0,0),"push"),0,0),[e]);
+		}
+		return edef;
 	}
 	,makeUnop: function(op,e) {
 		switch(e[1]) {
@@ -3244,12 +3297,58 @@ hscript.Parser.prototype = {
 									}
 								}
 							} catch( e ) { if( e != "__break__" ) throw e; }
-							c.expr = this.parseFullExpr();
+							var exprs = [];
+							try {
+								while(true) {
+									tk7 = this.token();
+									this.tokens.add(tk7);
+									switch(tk7[1]) {
+									case 2:
+										switch(tk7[2]) {
+										case "case":case "default":
+											throw "__break__";
+											break;
+										default:
+											exprs.push(this.parseFullExpr());
+										}
+										break;
+									case 7:
+										throw "__break__";
+										break;
+									default:
+										exprs.push(this.parseFullExpr());
+									}
+								}
+							} catch( e ) { if( e != "__break__" ) throw e; }
+							if(exprs.length == 1) c.expr = exprs[0]; else if(exprs.length == 0) c.expr = this.mk(hscript.Expr.EBlock([]),0,0); else c.expr = this.mk(hscript.Expr.EBlock(exprs),0,0);
 							break;
 						case "default":
 							if(def != null) this.unexpected(tk7);
-							this.ensure(hscript.Token.TSemicolon);
-							def = this.parseExpr();
+							this.ensure(hscript.Token.TDoubleDot);
+							var exprs1 = [];
+							try {
+								while(true) {
+									tk7 = this.token();
+									this.tokens.add(tk7);
+									switch(tk7[1]) {
+									case 2:
+										switch(tk7[2]) {
+										case "case":case "default":
+											throw "__break__";
+											break;
+										default:
+											exprs1.push(this.parseFullExpr());
+										}
+										break;
+									case 7:
+										throw "__break__";
+										break;
+									default:
+										exprs1.push(this.parseFullExpr());
+									}
+								}
+							} catch( e ) { if( e != "__break__" ) throw e; }
+							if(exprs1.length == 1) def = exprs1[0]; else if(exprs1.length == 0) def = this.mk(hscript.Expr.EBlock([]),0,0); else def = this.mk(hscript.Expr.EBlock(exprs1),0,0);
 							break;
 						default:
 							this.unexpected(tk7);
@@ -3942,7 +4041,7 @@ pgr.dconsole.DC.init = function(heightPt,align,theme,input,interfc) {
 	if(input == null) input = new pgr.dconsole.input.DCEmptyInput();
 	if(interfc == null) interfc = new pgr.dconsole.ui.DCEmtpyInterface();
 	pgr.dconsole.DC.instance = new pgr.dconsole.DConsole(input,interfc,theme);
-	pgr.dconsole.DC.logInfo("~~~~~~~~~~ DCONSOLE ~~~~~~~~~~ (v" + "4.4.0" + ")");
+	pgr.dconsole.DC.logInfo("~~~~~~~~~~ DCONSOLE ~~~~~~~~~~ (v" + "4.3.1" + ")");
 };
 pgr.dconsole.DC.setConsoleFont = function(font,embed,size,bold,italic,underline) {
 	if(underline == null) underline = false;
@@ -4131,8 +4230,6 @@ pgr.dconsole.DC["eval"] = function(expr) {
 	pgr.dconsole.DC.checkInstance();
 	pgr.dconsole.DC.instance.commands.evaluate(expr);
 };
-pgr.dconsole.DC.redirTraces = function(b) {
-};
 pgr.dconsole.DC.checkInstance = function() {
 	if(pgr.dconsole.DC.instance == null) pgr.dconsole.DC.init();
 };
@@ -4183,7 +4280,7 @@ pgr.dconsole.DCCommands.prototype = {
 		try {
 			if(StringTools.endsWith(StringTools.trim(input),";") == false) input = StringTools.trim(input) + ";";
 			var program = this.hScriptParser.parseString(input);
-			var result = this.hScriptInterp.execute(program);
+			var result = this.hScriptInterp.exprReturn(program);
 			if(typeof(result) == "number" || typeof(result) == "boolean" || result != null) this._console.logConfirmation(result);
 		} catch( e ) {
 			if(this.printErrorStack) {
@@ -4892,13 +4989,8 @@ pgr.dconsole.DConsole.prototype = {
 		this.interfc.log(data,color);
 		var scolor = StringTools.hex(color,6);
 		var s = Std.string(data);
-		var lines = s.split("\n");
-		var _g = 0;
-		while(_g < lines.length) {
-			var l = lines[_g];
-			++_g;
-			eval("var event = new CustomEvent(\"console_log\", { detail: { data:\"" + l + "\", color:\"" + scolor + "\" }}); " + "document.dispatchEvent(event);");
-		}
+		s = StringTools.replace(s,"\n","\\n");
+		eval("var event = new CustomEvent(\"console_log\", { detail: { data:\"" + s + "\", color:\"" + scolor + "\" }}); " + "document.dispatchEvent(event);");
 	}
 	,logConfirmation: function(data) {
 		this.log(data,pgr.dconsole.DCThemes.current.LOG_CON);
@@ -5193,7 +5285,7 @@ hscript.Parser.p1 = 0;
 hscript.Parser.readPos = 0;
 hscript.Parser.tokenMin = 0;
 hscript.Parser.tokenMax = 0;
-pgr.dconsole.DC.VERSION = "4.4.0";
+pgr.dconsole.DC.VERSION = "4.3.1";
 pgr.dconsole.DC.ALIGN_DOWN = "DOWN";
 pgr.dconsole.DC.ALIGN_UP = "UP";
 pgr.dconsole.DCProfiler.NUM_SPACES = 8;

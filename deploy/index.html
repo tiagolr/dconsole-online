@@ -6,32 +6,9 @@
         <meta charset="utf-8"/>
         <title>Haxe Console</title>
         <meta name="description" content="" />
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
         
-        <!-- build:css css/combined.css -->
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" />
-        <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css"/>
-        <link rel="stylesheet" href="bower_components/codemirror/theme/neat.css"/>
-        <link rel="stylesheet" href="bower_components/codemirror/addon/fold/foldgutter.css" />
-        <link rel="stylesheet" href="bower_components/codemirror/addon/dialog/dialog.css" />
-        <link rel="stylesheet" href="styles/jquery.terminal.css"/>
-        <link rel="stylesheet" href="styles/style.css" />
-        <!-- endbuild -->
+        <link rel="stylesheet" href="css/combined.css">
 
-        <!-- Google Analytics -->
-        <script type="text/javascript">
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                                    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-55271438-2', 'auto');
-            ga('send', 'pageview');
-
-        </script>
-        <!-- End Google Analytics -->
-        
     </head>
     <body>
 
@@ -45,18 +22,7 @@
                         <div class="navbar-header">
                             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                             </button>
-                            <a class="nav navbar-nav" href="#">
-                                
-                            </a>
-                            <a class="nav navbar-brand" href="#">
-                                <div style="margin-top:-5px">
-                                <img src="images/console_icon_small.png">
-                                <img src="images/logo_text_white.png" alt="">
-                                </div>
-                            </a>
-<!--                            <a class="nav navbar-brand" href="#">-->
-<!--                                <img src="images/logo_text_white.png" alt="">-->
-<!--                            </a>-->
+                            <a class="navbar-brand" href="#">Haxe DConsole</a>
                         </div>
 
 
@@ -82,7 +48,7 @@
                         </li>
                         </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="www.haxedomain.com">Home</a></li>
+                        <li><a href="#">Link</a></li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
@@ -115,18 +81,7 @@ trace("Hello World!!!\n");
 
 <!-- Scripts -->
 <script src="http://code.jquery.com/jquery-2.1.1.min.js" ></script>
-<!-- build:js scripts/combined.js -->
-<script src="bower_components/codemirror/lib/codemirror.js"></script>
-<script src="bower_components/codemirror/keymap/sublime.js"></script>
-<script src="bower_components/codemirror/mode/haxe/haxe.js"></script>
-<script src="bower_components/codemirror/addon/dialog/dialog.js"></script>
-<script src="bower_components/codemirror/addon/wrap/hardwrap.js"></script>
-<script src="bower_components/codemirror/addon/edit/matchbrackets.js"></script>
-<script src="bower_components/codemirror/addon/edit/closebrackets.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.min.js" ></script>
-<script src="scripts/jquery.terminal-0.8.8.min.js"></script>
-<script src="scripts/dconsole.js"></script>
-<!-- endbuild -->
+<script src="scripts/combined.js"></script>
 <script>
     
     var terminal;

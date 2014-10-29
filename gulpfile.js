@@ -5,9 +5,10 @@ var gulp = require('gulp'),
     minifyCss = require('gulp-minify-css'),
     del = require('del');
 
-
+var deploy_folder = 'deploy';
+	
 gulp.task('clean', function() {
-   del(['deploy']); 
+   del([deploy_folder]); 
 });
 
 gulp.task('build', function () {
@@ -19,8 +20,8 @@ gulp.task('build', function () {
         .pipe(gulpif('*.css', minifyCss()))
         .pipe(assets.restore())
         .pipe(useref())
-        .pipe(gulp.dest('deploy'));
+        .pipe(gulp.dest(deploy_folder));
     
     gulp.src('bower_components/bootstrap/dist/fonts/*')
-        .pipe(gulp.dest('deploy/fonts'))
+        .pipe(gulp.dest(deploy_folder + '/fonts'))
 });

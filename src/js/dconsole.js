@@ -4041,7 +4041,7 @@ pgr.dconsole.DC.init = function(heightPt,align,theme,input,interfc) {
 	if(input == null) input = new pgr.dconsole.input.DCEmptyInput();
 	if(interfc == null) interfc = new pgr.dconsole.ui.DCEmtpyInterface();
 	pgr.dconsole.DC.instance = new pgr.dconsole.DConsole(input,interfc,theme);
-	pgr.dconsole.DC.logInfo("~~~~~~~~~~ DCONSOLE ~~~~~~~~~~ (v" + "4.3.1" + ")");
+	pgr.dconsole.DC.logInfo("~~~~~~~~~~ DCONSOLE ~~~~~~~~~~ (v" + "4.3.2" + ")");
 };
 pgr.dconsole.DC.setConsoleFont = function(font,embed,size,bold,italic,underline) {
 	if(underline == null) underline = false;
@@ -4471,6 +4471,8 @@ pgr.dconsole.DCCommands.prototype = {
 };
 pgr.dconsole.DCInterp = function() {
 	hscript.Interp.call(this);
+	this.declared = new Array();
+	this.depth = 0;
 };
 $hxClasses["pgr.dconsole.DCInterp"] = pgr.dconsole.DCInterp;
 pgr.dconsole.DCInterp.__name__ = ["pgr","dconsole","DCInterp"];
@@ -5285,7 +5287,7 @@ hscript.Parser.p1 = 0;
 hscript.Parser.readPos = 0;
 hscript.Parser.tokenMin = 0;
 hscript.Parser.tokenMax = 0;
-pgr.dconsole.DC.VERSION = "4.3.1";
+pgr.dconsole.DC.VERSION = "4.3.2";
 pgr.dconsole.DC.ALIGN_DOWN = "DOWN";
 pgr.dconsole.DC.ALIGN_UP = "UP";
 pgr.dconsole.DCProfiler.NUM_SPACES = 8;

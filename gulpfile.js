@@ -6,6 +6,7 @@ var gulp = require('gulp'),
     del = require('del');
 
 var deploy_folder = 'deploy';
+var source_folder = 'src';
 	
 gulp.task('clean', function() {
    del([deploy_folder]); 
@@ -14,7 +15,7 @@ gulp.task('clean', function() {
 gulp.task('build', function () {
     var assets = useref.assets();
     
-    gulp.src('index.html')
+    gulp.src(source_folder + '/index.html')
         .pipe(assets)
         .pipe(gulpif('*.js', uglify()))
         .pipe(gulpif('*.css', minifyCss()))
@@ -22,6 +23,11 @@ gulp.task('build', function () {
         .pipe(useref())
         .pipe(gulp.dest(deploy_folder));
     
-    gulp.src('bower_components/bootstrap/dist/fonts/*')
+	// process bootstrap fonts
+    gulp.src(source_folder + '/bower_components/bootstrap/dist/fonts/*')
         .pipe(gulp.dest(deploy_folder + '/fonts'))
+	
+	// process images
+	gulp.src(source_folder + '/img/*')
+		.pipe(gulp.dest(deploy_folder + '/img'))
 });

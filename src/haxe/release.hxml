@@ -2,4 +2,4 @@
 -cp src
 -lib dconsole
 -dce no
--js ../scripts/dconsole.js
+-js ../../js/dconsole.js

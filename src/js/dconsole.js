@@ -185,6 +185,7 @@ IntIterator.prototype = {
 var Main = $hx_exports.Main = function() { };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
+Main.examples = null;
 Main.main = function() {
 	haxe.Log.trace = function(v,inf) {
 		pgr.dconsole.DC.log(v);
@@ -197,9 +198,38 @@ Main.init = function() {
 	if(cmds.exists("monitor")) cmds.remove("monitor");
 	if(cmds.exists("profiler")) cmds.remove("profiler");
 	pgr.dconsole.DC.registerFunction(Main.runCode,"run","Runs the code inside the text editor");
+	Main.examples = new Array();
+	Main.addExample("01_Hello_World");
+};
+Main.prepareExamples = function(codeMirror) {
+	var exList = new js.JQuery("#examples-list");
+	var i = 0;
+	var _g = 0;
+	var _g1 = Main.examples;
+	while(_g < _g1.length) {
+		var ex = [_g1[_g]];
+		++_g;
+		var title = ex[0].title;
+		var id = "exBtn" + i;
+		exList.append("<li><a id=\"" + id + "\" href=\"#\">" + title + "</a></li>");
+		var btn = new js.JQuery("#" + id);
+		btn.on("click",(function(ex) {
+			return function(evt) {
+				codeMirror.setValue(ex[0].body);
+			};
+		})(ex));
+		i++;
+	}
 };
 Main.runCode = function() {
 	eval("document.dispatchEvent(new Event(\"console_run\"));");
+};
+Main.addExample = function(title) {
+	var s = haxe.Resource.getString(title);
+	if(s == null) return;
+	title = StringTools.replace(title,"_"," ");
+	title = HxOverrides.substr(title,3,null);
+	Main.examples.push({ title : title, body : s});
 };
 var _Map = {};
 _Map.Map_Impl_ = function() { };
@@ -759,6 +789,48 @@ haxe.Log.trace = function(v,infos) {
 haxe.Log.clear = function() {
 	js.Boot.__clear_trace();
 };
+haxe.Resource = function() { };
+$hxClasses["haxe.Resource"] = haxe.Resource;
+haxe.Resource.__name__ = ["haxe","Resource"];
+haxe.Resource.content = null;
+haxe.Resource.listNames = function() {
+	var names = new Array();
+	var _g = 0;
+	var _g1 = haxe.Resource.content;
+	while(_g < _g1.length) {
+		var x = _g1[_g];
+		++_g;
+		names.push(x.name);
+	}
+	return names;
+};
+haxe.Resource.getString = function(name) {
+	var _g = 0;
+	var _g1 = haxe.Resource.content;
+	while(_g < _g1.length) {
+		var x = _g1[_g];
+		++_g;
+		if(x.name == name) {
+			if(x.str != null) return x.str;
+			var b = haxe.crypto.Base64.decode(x.data);
+			return b.toString();
+		}
+	}
+	return null;
+};
+haxe.Resource.getBytes = function(name) {
+	var _g = 0;
+	var _g1 = haxe.Resource.content;
+	while(_g < _g1.length) {
+		var x = _g1[_g];
+		++_g;
+		if(x.name == name) {
+			if(x.str != null) return haxe.io.Bytes.ofString(x.str);
+			return haxe.crypto.Base64.decode(x.data);
+		}
+	}
+	return null;
+};
 haxe.Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
@@ -794,6 +866,283 @@ haxe.Timer.prototype = {
 	,run: function() {
 	}
 	,__class__: haxe.Timer
+};
+haxe.io = {};
+haxe.io.Bytes = function(length,b) {
+	this.length = length;
+	this.b = b;
+};
+$hxClasses["haxe.io.Bytes"] = haxe.io.Bytes;
+haxe.io.Bytes.__name__ = ["haxe","io","Bytes"];
+haxe.io.Bytes.alloc = function(length) {
+	var a = new Array();
+	var _g = 0;
+	while(_g < length) {
+		var i = _g++;
+		a.push(0);
+	}
+	return new haxe.io.Bytes(length,a);
+};
+haxe.io.Bytes.ofString = function(s) {
+	var a = new Array();
+	var i = 0;
+	while(i < s.length) {
+		var c = StringTools.fastCodeAt(s,i++);
+		if(55296 <= c && c <= 56319) c = c - 55232 << 10 | StringTools.fastCodeAt(s,i++) & 1023;
+		if(c <= 127) a.push(c); else if(c <= 2047) {
+			a.push(192 | c >> 6);
+			a.push(128 | c & 63);
+		} else if(c <= 65535) {
+			a.push(224 | c >> 12);
+			a.push(128 | c >> 6 & 63);
+			a.push(128 | c & 63);
+		} else {
+			a.push(240 | c >> 18);
+			a.push(128 | c >> 12 & 63);
+			a.push(128 | c >> 6 & 63);
+			a.push(128 | c & 63);
+		}
+	}
+	return new haxe.io.Bytes(a.length,a);
+};
+haxe.io.Bytes.ofData = function(b) {
+	return new haxe.io.Bytes(b.length,b);
+};
+haxe.io.Bytes.fastGet = function(b,pos) {
+	return b[pos];
+};
+haxe.io.Bytes.prototype = {
+	length: null
+	,b: null
+	,get: function(pos) {
+		return this.b[pos];
+	}
+	,set: function(pos,v) {
+		this.b[pos] = v & 255;
+	}
+	,blit: function(pos,src,srcpos,len) {
+		if(pos < 0 || srcpos < 0 || len < 0 || pos + len > this.length || srcpos + len > src.length) throw haxe.io.Error.OutsideBounds;
+		var b1 = this.b;
+		var b2 = src.b;
+		if(b1 == b2 && pos > srcpos) {
+			var i = len;
+			while(i > 0) {
+				i--;
+				b1[i + pos] = b2[i + srcpos];
+			}
+			return;
+		}
+		var _g = 0;
+		while(_g < len) {
+			var i1 = _g++;
+			b1[i1 + pos] = b2[i1 + srcpos];
+		}
+	}
+	,fill: function(pos,len,value) {
+		var _g = 0;
+		while(_g < len) {
+			var i = _g++;
+			this.set(pos++,value);
+		}
+	}
+	,sub: function(pos,len) {
+		if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
+		return new haxe.io.Bytes(len,this.b.slice(pos,pos + len));
+	}
+	,compare: function(other) {
+		var b1 = this.b;
+		var b2 = other.b;
+		var len;
+		if(this.length < other.length) len = this.length; else len = other.length;
+		var _g = 0;
+		while(_g < len) {
+			var i = _g++;
+			if(b1[i] != b2[i]) return b1[i] - b2[i];
+		}
+		return this.length - other.length;
+	}
+	,getDouble: function(pos) {
+		var b = new haxe.io.BytesInput(this,pos,8);
+		return b.readDouble();
+	}
+	,getFloat: function(pos) {
+		var b = new haxe.io.BytesInput(this,pos,4);
+		return b.readFloat();
+	}
+	,setDouble: function(pos,v) {
+		throw "Not supported";
+	}
+	,setFloat: function(pos,v) {
+		throw "Not supported";
+	}
+	,getString: function(pos,len) {
+		if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
+		var s = "";
+		var b = this.b;
+		var fcc = String.fromCharCode;
+		var i = pos;
+		var max = pos + len;
+		while(i < max) {
+			var c = b[i++];
+			if(c < 128) {
+				if(c == 0) break;
+				s += fcc(c);
+			} else if(c < 224) s += fcc((c & 63) << 6 | b[i++] & 127); else if(c < 240) {
+				var c2 = b[i++];
+				s += fcc((c & 31) << 12 | (c2 & 127) << 6 | b[i++] & 127);
+			} else {
+				var c21 = b[i++];
+				var c3 = b[i++];
+				var u = (c & 15) << 18 | (c21 & 127) << 12 | (c3 & 127) << 6 | b[i++] & 127;
+				s += fcc((u >> 10) + 55232);
+				s += fcc(u & 1023 | 56320);
+			}
+		}
+		return s;
+	}
+	,readString: function(pos,len) {
+		return this.getString(pos,len);
+	}
+	,toString: function() {
+		return this.getString(0,this.length);
+	}
+	,toHex: function() {
+		var s = new StringBuf();
+		var chars = [];
+		var str = "0123456789abcdef";
+		var _g1 = 0;
+		var _g = str.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			chars.push(HxOverrides.cca(str,i));
+		}
+		var _g11 = 0;
+		var _g2 = this.length;
+		while(_g11 < _g2) {
+			var i1 = _g11++;
+			var c = this.b[i1];
+			s.b += String.fromCharCode(chars[c >> 4]);
+			s.b += String.fromCharCode(chars[c & 15]);
+		}
+		return s.b;
+	}
+	,getData: function() {
+		return this.b;
+	}
+	,__class__: haxe.io.Bytes
+};
+haxe.crypto = {};
+haxe.crypto.Base64 = function() { };
+$hxClasses["haxe.crypto.Base64"] = haxe.crypto.Base64;
+haxe.crypto.Base64.__name__ = ["haxe","crypto","Base64"];
+haxe.crypto.Base64.encode = function(bytes,complement) {
+	if(complement == null) complement = true;
+	var str = new haxe.crypto.BaseCode(haxe.crypto.Base64.BYTES).encodeBytes(bytes).toString();
+	if(complement) {
+		var _g1 = 0;
+		var _g = (3 - bytes.length * 4 % 3) % 3;
+		while(_g1 < _g) {
+			var i = _g1++;
+			str += "=";
+		}
+	}
+	return str;
+};
+haxe.crypto.Base64.decode = function(str,complement) {
+	if(complement == null) complement = true;
+	if(complement) while(HxOverrides.cca(str,str.length - 1) == 61) str = HxOverrides.substr(str,0,-1);
+	return new haxe.crypto.BaseCode(haxe.crypto.Base64.BYTES).decodeBytes(haxe.io.Bytes.ofString(str));
+};
+haxe.crypto.BaseCode = function(base) {
+	var len = base.length;
+	var nbits = 1;
+	while(len > 1 << nbits) nbits++;
+	if(nbits > 8 || len != 1 << nbits) throw "BaseCode : base length must be a power of two.";
+	this.base = base;
+	this.nbits = nbits;
+};
+$hxClasses["haxe.crypto.BaseCode"] = haxe.crypto.BaseCode;
+haxe.crypto.BaseCode.__name__ = ["haxe","crypto","BaseCode"];
+haxe.crypto.BaseCode.encode = function(s,base) {
+	var b = new haxe.crypto.BaseCode(haxe.io.Bytes.ofString(base));
+	return b.encodeString(s);
+};
+haxe.crypto.BaseCode.decode = function(s,base) {
+	var b = new haxe.crypto.BaseCode(haxe.io.Bytes.ofString(base));
+	return b.decodeString(s);
+};
+haxe.crypto.BaseCode.prototype = {
+	base: null
+	,nbits: null
+	,tbl: null
+	,encodeBytes: function(b) {
+		var nbits = this.nbits;
+		var base = this.base;
+		var size = b.length * 8 / nbits | 0;
+		var out = haxe.io.Bytes.alloc(size + (b.length * 8 % nbits == 0?0:1));
+		var buf = 0;
+		var curbits = 0;
+		var mask = (1 << nbits) - 1;
+		var pin = 0;
+		var pout = 0;
+		while(pout < size) {
+			while(curbits < nbits) {
+				curbits += 8;
+				buf <<= 8;
+				buf |= b.get(pin++);
+			}
+			curbits -= nbits;
+			out.set(pout++,base.b[buf >> curbits & mask]);
+		}
+		if(curbits > 0) out.set(pout++,base.b[buf << nbits - curbits & mask]);
+		return out;
+	}
+	,initTable: function() {
+		var tbl = new Array();
+		var _g = 0;
+		while(_g < 256) {
+			var i = _g++;
+			tbl[i] = -1;
+		}
+		var _g1 = 0;
+		var _g2 = this.base.length;
+		while(_g1 < _g2) {
+			var i1 = _g1++;
+			tbl[this.base.b[i1]] = i1;
+		}
+		this.tbl = tbl;
+	}
+	,decodeBytes: function(b) {
+		var nbits = this.nbits;
+		var base = this.base;
+		if(this.tbl == null) this.initTable();
+		var tbl = this.tbl;
+		var size = b.length * nbits >> 3;
+		var out = haxe.io.Bytes.alloc(size);
+		var buf = 0;
+		var curbits = 0;
+		var pin = 0;
+		var pout = 0;
+		while(pout < size) {
+			while(curbits < 8) {
+				curbits += nbits;
+				buf <<= nbits;
+				var i = tbl[b.get(pin++)];
+				if(i == -1) throw "BaseCode : invalid encoded char";
+				buf |= i;
+			}
+			curbits -= 8;
+			out.set(pout++,buf >> curbits & 255);
+		}
+		return out;
+	}
+	,encodeString: function(s) {
+		return this.encodeBytes(haxe.io.Bytes.ofString(s)).toString();
+	}
+	,decodeString: function(s) {
+		return this.decodeBytes(haxe.io.Bytes.ofString(s)).toString();
+	}
+	,__class__: haxe.crypto.BaseCode
 };
 haxe.ds = {};
 haxe.ds.BalancedTree = function() {
@@ -1290,170 +1639,6 @@ haxe.ds.WeakMap.prototype = {
 		return null;
 	}
 	,__class__: haxe.ds.WeakMap
-};
-haxe.io = {};
-haxe.io.Bytes = function(length,b) {
-	this.length = length;
-	this.b = b;
-};
-$hxClasses["haxe.io.Bytes"] = haxe.io.Bytes;
-haxe.io.Bytes.__name__ = ["haxe","io","Bytes"];
-haxe.io.Bytes.alloc = function(length) {
-	var a = new Array();
-	var _g = 0;
-	while(_g < length) {
-		var i = _g++;
-		a.push(0);
-	}
-	return new haxe.io.Bytes(length,a);
-};
-haxe.io.Bytes.ofString = function(s) {
-	var a = new Array();
-	var i = 0;
-	while(i < s.length) {
-		var c = StringTools.fastCodeAt(s,i++);
-		if(55296 <= c && c <= 56319) c = c - 55232 << 10 | StringTools.fastCodeAt(s,i++) & 1023;
-		if(c <= 127) a.push(c); else if(c <= 2047) {
-			a.push(192 | c >> 6);
-			a.push(128 | c & 63);
-		} else if(c <= 65535) {
-			a.push(224 | c >> 12);
-			a.push(128 | c >> 6 & 63);
-			a.push(128 | c & 63);
-		} else {
-			a.push(240 | c >> 18);
-			a.push(128 | c >> 12 & 63);
-			a.push(128 | c >> 6 & 63);
-			a.push(128 | c & 63);
-		}
-	}
-	return new haxe.io.Bytes(a.length,a);
-};
-haxe.io.Bytes.ofData = function(b) {
-	return new haxe.io.Bytes(b.length,b);
-};
-haxe.io.Bytes.fastGet = function(b,pos) {
-	return b[pos];
-};
-haxe.io.Bytes.prototype = {
-	length: null
-	,b: null
-	,get: function(pos) {
-		return this.b[pos];
-	}
-	,set: function(pos,v) {
-		this.b[pos] = v & 255;
-	}
-	,blit: function(pos,src,srcpos,len) {
-		if(pos < 0 || srcpos < 0 || len < 0 || pos + len > this.length || srcpos + len > src.length) throw haxe.io.Error.OutsideBounds;
-		var b1 = this.b;
-		var b2 = src.b;
-		if(b1 == b2 && pos > srcpos) {
-			var i = len;
-			while(i > 0) {
-				i--;
-				b1[i + pos] = b2[i + srcpos];
-			}
-			return;
-		}
-		var _g = 0;
-		while(_g < len) {
-			var i1 = _g++;
-			b1[i1 + pos] = b2[i1 + srcpos];
-		}
-	}
-	,fill: function(pos,len,value) {
-		var _g = 0;
-		while(_g < len) {
-			var i = _g++;
-			this.set(pos++,value);
-		}
-	}
-	,sub: function(pos,len) {
-		if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
-		return new haxe.io.Bytes(len,this.b.slice(pos,pos + len));
-	}
-	,compare: function(other) {
-		var b1 = this.b;
-		var b2 = other.b;
-		var len;
-		if(this.length < other.length) len = this.length; else len = other.length;
-		var _g = 0;
-		while(_g < len) {
-			var i = _g++;
-			if(b1[i] != b2[i]) return b1[i] - b2[i];
-		}
-		return this.length - other.length;
-	}
-	,getDouble: function(pos) {
-		var b = new haxe.io.BytesInput(this,pos,8);
-		return b.readDouble();
-	}
-	,getFloat: function(pos) {
-		var b = new haxe.io.BytesInput(this,pos,4);
-		return b.readFloat();
-	}
-	,setDouble: function(pos,v) {
-		throw "Not supported";
-	}
-	,setFloat: function(pos,v) {
-		throw "Not supported";
-	}
-	,getString: function(pos,len) {
-		if(pos < 0 || len < 0 || pos + len > this.length) throw haxe.io.Error.OutsideBounds;
-		var s = "";
-		var b = this.b;
-		var fcc = String.fromCharCode;
-		var i = pos;
-		var max = pos + len;
-		while(i < max) {
-			var c = b[i++];
-			if(c < 128) {
-				if(c == 0) break;
-				s += fcc(c);
-			} else if(c < 224) s += fcc((c & 63) << 6 | b[i++] & 127); else if(c < 240) {
-				var c2 = b[i++];
-				s += fcc((c & 31) << 12 | (c2 & 127) << 6 | b[i++] & 127);
-			} else {
-				var c21 = b[i++];
-				var c3 = b[i++];
-				var u = (c & 15) << 18 | (c21 & 127) << 12 | (c3 & 127) << 6 | b[i++] & 127;
-				s += fcc((u >> 10) + 55232);
-				s += fcc(u & 1023 | 56320);
-			}
-		}
-		return s;
-	}
-	,readString: function(pos,len) {
-		return this.getString(pos,len);
-	}
-	,toString: function() {
-		return this.getString(0,this.length);
-	}
-	,toHex: function() {
-		var s = new StringBuf();
-		var chars = [];
-		var str = "0123456789abcdef";
-		var _g1 = 0;
-		var _g = str.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			chars.push(HxOverrides.cca(str,i));
-		}
-		var _g11 = 0;
-		var _g2 = this.length;
-		while(_g11 < _g2) {
-			var i1 = _g11++;
-			var c = this.b[i1];
-			s.b += String.fromCharCode(chars[c >> 4]);
-			s.b += String.fromCharCode(chars[c & 15]);
-		}
-		return s.b;
-	}
-	,getData: function() {
-		return this.b;
-	}
-	,__class__: haxe.io.Bytes
 };
 haxe.io.BytesBuffer = function() {
 	this.b = new Array();
@@ -4016,6 +4201,48 @@ js.Boot.__instanceof = function(o,cl) {
 js.Boot.__cast = function(o,t) {
 	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
 };
+js.Browser = function() { };
+$hxClasses["js.Browser"] = js.Browser;
+js.Browser.__name__ = ["js","Browser"];
+js.Browser.__properties__ = {get_supported:"get_supported",get_navigator:"get_navigator",get_location:"get_location",get_document:"get_document",get_window:"get_window"}
+js.Browser.get_window = function() {
+	return window;
+};
+js.Browser.get_document = function() {
+	return window.document;
+};
+js.Browser.get_location = function() {
+	return window.location;
+};
+js.Browser.get_navigator = function() {
+	return window.navigator;
+};
+js.Browser.get_supported = function() {
+	return typeof window != "undefined";
+};
+js.Browser.getLocalStorage = function() {
+	try {
+		var s = window.localStorage;
+		s.getItem("");
+		return s;
+	} catch( e ) {
+		return null;
+	}
+};
+js.Browser.getSessionStorage = function() {
+	try {
+		var s = window.sessionStorage;
+		s.getItem("");
+		return s;
+	} catch( e ) {
+		return null;
+	}
+};
+js.Browser.createXMLHttpRequest = function() {
+	if(typeof XMLHttpRequest != "undefined") return new XMLHttpRequest();
+	if(typeof ActiveXObject != "undefined") return new ActiveXObject("Microsoft.XMLHTTP");
+	throw "Unable to create XMLHttpRequest object.";
+};
 js.Lib = function() { };
 $hxClasses["js.Lib"] = js.Lib;
 js.Lib.__name__ = ["js","Lib"];
@@ -4027,6 +4254,22 @@ js.Lib.alert = function(v) {
 };
 js.Lib["eval"] = function(code) {
 	return eval(code);
+};
+js.html = {};
+js.html._CanvasElement = {};
+js.html._CanvasElement.CanvasUtil = function() { };
+$hxClasses["js.html._CanvasElement.CanvasUtil"] = js.html._CanvasElement.CanvasUtil;
+js.html._CanvasElement.CanvasUtil.__name__ = ["js","html","_CanvasElement","CanvasUtil"];
+js.html._CanvasElement.CanvasUtil.getContextWebGL = function(canvas,attribs) {
+	var _g = 0;
+	var _g1 = ["webgl","experimental-webgl"];
+	while(_g < _g1.length) {
+		var name = _g1[_g];
+		++_g;
+		var ctx = canvas.getContext(name,attribs);
+		if(ctx != null) return ctx;
+	}
+	return null;
 };
 var pgr = {};
 pgr.dconsole = {};
@@ -5281,6 +5524,18 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	}
 	return a1;
 };
+haxe.Resource.content = [{ name : "2", data : "RXhhbXBsZTINCi8vIFRoaXMgaXMgZXhhbXBsZTINCi8vLy8vLy8vLy8vLw0KLy8vLy8vLy8NCi8vLy8vLy8vLy8vLw"},{ name : "3", data : "RXhhbXBsZTMNCi8vLy8vLy8vLy8vLy8vLy8vLy8NCi8NCi8vLy8vLy8vLy8vLy8vLy8vLy8vDQovLw0KLy8NCi8vDQovL1dPUkRFRD8"},{ name : "01_Hello_World", data : "Ly8tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KLy8gU2ltcGxlIGhlbGxvIHdvcmxkIGV4YW1wbGUuDQovLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpmb3IoaSBpbiAwLi4uMykgew0KICAgIHRyYWNlKDMgLSBpICsgIi4uLiIpOw0KfQ0KDQp0cmFjZSgiSGVsbG8gV29ybGQhISFcbiIpOw"}];
+var q = window.jQuery;
+js.JQuery = q;
+q.fn.iterator = function() {
+	return { pos : 0, j : this, hasNext : function() {
+		return this.pos < this.j.length;
+	}, next : function() {
+		return $(this.j[this.pos++]);
+	}};
+};
+haxe.crypto.Base64.CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+haxe.crypto.Base64.BYTES = haxe.io.Bytes.ofString(haxe.crypto.Base64.CHARS);
 haxe.ds.ObjectMap.count = 0;
 haxe.io.Output.LN2 = Math.log(2);
 hscript.Parser.p1 = 0;

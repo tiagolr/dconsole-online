@@ -2,4 +2,7 @@
 -cp src
 -lib dconsole
 -dce no
--js ../../js/dconsole.js
+-js ../js/dconsole.js
+-resource ../examples/01_Hello_World@01_Hello_World
+-resource ../examples/02_@2
+-resource ../examples/03_@3

@@ -30,4 +30,5 @@ gulp.task('build', function () {
 	// process images
 	gulp.src(source_folder + '/img/*')
 		.pipe(gulp.dest(deploy_folder + '/img'))
+	
 });

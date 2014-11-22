@@ -3,4 +3,4 @@
 -debug
 -lib dconsole
 -dce no
--js ../../js/dconsole.js
+-js ../js/dconsole.js

@@ -5,6 +5,7 @@ import js.Lib;
 import pgr.dconsole.DC;
 import pgr.dconsole.DConsole;
 import pgr.dconsole.ui.DCEmtpyInterface;
+import js.JQuery;
 
 /**
  * ...
@@ -12,6 +13,8 @@ import pgr.dconsole.ui.DCEmtpyInterface;
  */
 @:expose
 class Main {
+	
+	static var examples:Array<Dynamic>;
 	
 	static function main() {
 		haxe.Log.trace = function(v : Dynamic, ?inf : PosInfos) { DC.log(v); }
@@ -32,9 +35,41 @@ class Main {
 		}
 		
 		DC.registerFunction(runCode, "run", "Runs the code inside the text editor");
+		
+		examples = new Array<Dynamic>();
+		addExample('01_Hello_World');
+		//addExample('ex2');
+		//addExample('ex3');
+	}
+	
+	static public function prepareExamples(codeMirror:Dynamic) {
+		var exList = new JQuery('#examples-list');
+		
+		var i = 0;
+		for (ex in examples) {
+			var title = ex.title;
+			var id = 'exBtn$i';
+			
+			exList.append('<li><a id="$id" href="#">$title</a></li>');
+			
+			var btn = new JQuery('#$id');
+			btn.on('click', function(evt) {
+				codeMirror.setValue(ex.body);
+			});
+			i++;
+		}
 	}
 	
 	static private function runCode() {
 		Lib.eval('document.dispatchEvent(new Event("console_run"));');
+	}
+	
+	static function addExample(title:String) {
+		var s = haxe.Resource.getString(title);
+		if (s == null) return;
+		
+		title = StringTools.replace(title,"_"," "); // replace underscores with spaces
+		title = title.substr(3); // remove example number
+		examples.push( { title:title, body:s } );
 	}
 }

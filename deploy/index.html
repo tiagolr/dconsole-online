@@ -6,7 +6,6 @@
         <meta charset="utf-8"/>
         <title>Haxe Console</title>
         <meta name="description" content="" />
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
         
         <link rel="stylesheet" href="css/combined.css">
 
@@ -27,55 +26,92 @@
     <body>
 
         <div class="container-fluid">
-
+            
             <div class="header">
+               
                 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <!--                    <nav class="navbar navbar-inverse" role="navigation">-->
                     <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <div class="navbar-header">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                            </button>
-                            <a class="nav navbar-nav" href="#">
-                                
-                            <a class="nav navbar-brand" href="#">
-                                <img src="img/logo_text_white.png" alt="">
-                            </a>
-                            </a>
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+							<a class="nav navbar-brand" href="#">
+								<img src="img/logo_text_white.png" alt="">
+							</a>
                         </div>
-
 
                         <!-- Collect the nav links, forms, and other content for toggling -->
                         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                             <ul class="nav navbar-nav">
                                 <li><a href="#" class="navbar-link"></a></p></li>
-                        <li>
-                            <div class="btn-group ">
-                                <button id="btn-run" class="btn btn-default navbar-btn">
-                                    <span class="glyphicon glyphicon-flash"></span> Run
-                                </button>
-                                <button id="btn-settings" class="btn btn-default navbar-btn disabled">
-                                    <span class="glyphicon glyphicon-cog"></span> Settings
-                                </button>
-                                <button id="btn-settings" class="btn btn-default navbar-btn disabled">
-                                    <span class="glyphicon glyphicon-file"></span> Examples
-                                </button>
-                                <button id="btn-help" class="btn btn-default navbar-btn disabled">
-                                    <span class="glyphicon glyphicon-question-sign"></span> Help
-                                </button>
-                            </div>
-                        </li>
-                        </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="home">Home</a></li>
-                    </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
-        </div>  <!--                    </nav>-->
+								<li>
+									<div class="btn-group ">
+										<button id="btn-run" class="btn btn-default navbar-btn">
+											<span class="glyphicon glyphicon-flash"></span> Run
+										</button>
+										<button id="btn-settings" class="btn btn-default navbar-btn disabled">
+											<span class="glyphicon glyphicon-cog"></span> Settings
+										</button>
+										<div class="btn-group" role="group">
+											<button class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+												<span class="glyphicon glyphicon-file"></span>Examples <span class="caret"></span>
+											</button>
+											<ul id="examples-list" class="dropdown-menu" role="menu">
+												<!-- filled in runtime -->
+											</ul>
+										</div>
+										<button id="btn-help" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#help-screen">
+											<span class="glyphicon glyphicon-question-sign"></span> Help
+										</button>
+										
+									</div>
+								</li>
+                        	</ul>
+							<ul class="nav navbar-nav navbar-right">
+								<li><a href="../">Home</a></li>
+							</ul>
+						</div><!-- /.navbar-collapse -->
+           		
+            		</div><!-- /.container-fluid -->
+        		</div>  <!--                    </nav>-->
 
 
         </div>
     <div class="row fill-h content">
+    
+    <!--
+    HELP SCREEN
+    -->
+		<div class="modal fade" id="help-screen" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+						<h4 class="modal-title" id="myModalLabel">Haxe Console</h4>
+					</div>
+					<div class="modal-body">
+						Haxe console can be used to test haxe syntax and code snippets from your browser.
+						<p></p>
+						It relies on <a href="https://github.com/HaxeFoundation/hscript" target="_blank">hscript</a> to interpret expressions, there is no support compile features like macros or type declarations (enums, classes, typedefs..).
+						<hr>
+						This page also uses <a href="https://github.com/prog4mr/dconsole" target="_blank">DConsole</a>, a library which wraps hscript and allows you to add a console to cross-platform applications and interact with them in real time.
+						<hr>
+						You can find this page <a href="https://github.com/prog4mr/dconsole-online" target="_blank">repository on github</a> as an example of how to integrate dconsole with html5 and some Haxe + JS + Jquery usage.
+						<hr>
+						For more information on how to use the console or what commands are available, enter <strong>'HELP'</strong> or <strong>'COMMANDS'</strong> on the terminal and follow up from there.
+					</div>
+				</div>
+			</div>
+		</div>
+       
+   	<!--
+    LEFT COLUMN
+    -->
         <div class="col-xs-6 fill-h code-area">
             <textarea id="textprogram" class="fill-h">
 //--------------------------------------
@@ -89,6 +125,9 @@ trace("Hello World!!!\n");
             </textarea>
         </div>
 
+	<!--
+RIGHT COLUMN
+	-->
         <div class="col-xs-6 fill-h code-area">
             <div id="textconsole">
             </div>
@@ -103,12 +142,13 @@ trace("Hello World!!!\n");
 <script src="scripts/combined.js"></script>
 <script>
     
+	document.body.style.overflow = "hidden";
+	
     var terminal;
     var code;
 
     $(function () {
-
-	
+		
         code = CodeMirror.fromTextArea($('#textprogram')[0], {
             lineNumbers: true,
             lineWrapping:true,
@@ -148,6 +188,8 @@ trace("Hello World!!!\n");
         });
         
         Main.init();
+		Main.prepareExamples(code);
+		
     });
 </script>
 </body>

@@ -40,7 +40,7 @@
                
                 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <!--                    <nav class="navbar navbar-inverse" role="navigation">-->
-                    <div id="header-container" class="container-fluid">
+                    <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <div class="navbar-header">
 							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -113,14 +113,16 @@
 						<h4 class="modal-title" id="myModalLabel">Haxe Console</h4>
 					</div>
 					<div class="modal-body">
-						Haxe console can be used to test haxe syntax and code snippets from your browser.
-						<p></p>
-						It relies on <a href="https://github.com/HaxeFoundation/hscript" target="_blank">hscript</a> to interpret expressions, there is no support compile features like macros or type declarations (enums, classes, typedefs..).
+						Haxe console is an online interpreter that can be used to test haxe syntax and code snippets from your browser. 
+						It runs on the client and relies on <a href="https://github.com/HaxeFoundation/hscript" target="_blank">hscript</a> to evaluate expressions without compiling.
 						<hr>
 						This page also uses <a href="https://github.com/prog4mr/dconsole" target="_blank">DConsole</a>, a library which wraps hscript and allows you to add a console to cross-platform applications and interact with them in real-time.
 						<hr>
-						You can find this page <a href="https://github.com/prog4mr/dconsole-online" target="_blank">repository on github</a> as an example of how to integrate dconsole with html5 and some Haxe + JS + Jquery usage.
+						You can find this page <a href="https://github.com/prog4mr/dconsole-online" target="_blank">repository on github</a> as an example of how to integrate dconsole with html5 and some Haxe + JS + Jquery usage. Feel free to send any examples you find interesting as a pull request to be added to this page. 
 						<hr>
+						<strong>Shorcuts:</strong>
+						<p></p>
+						
 						For more information on how to use the console or what commands are available, enter <strong>'HELP'</strong> or <strong>'COMMANDS'</strong> on the terminal and follow-up from there.
 					</div>
 				</div>
@@ -186,12 +188,18 @@ RIGHT COLUMN
         });
         
         terminal = $('#textconsole').terminal(function(command, term) {
+			
             if (command !== '') {
                 pgr.dconsole.DC.eval(command);
             } else {
                 term.echo('');
             }
         }, {
+			keydown: function(e) {
+				if (e.which === 82 && e.ctrlKey) { // DISABLE CTRL+R
+					return true;
+				}
+			},
             greetings: false,
             name: 'dconsole',
             height: "100%",
@@ -218,6 +226,23 @@ RIGHT COLUMN
         
         Main.init();
 		Main.prepareExamples(code);
+		
+		//-----------------------------------
+		// Extra shortcuts
+		//-----------------------------------
+		// CTRL R 
+		$(document).keyup(function(e){
+			if (e.keyCode==82 && e.ctrlKey) {
+				pgr.dconsole.DC.eval(code.getValue()); 
+			}
+		});
+		
+		$(document).keydown(function(e) {
+			if (e.keyCode==82 && e.ctrlKey) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		});
 		
     });
 </script>

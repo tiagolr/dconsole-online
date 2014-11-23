@@ -44,7 +44,7 @@ class Main {
 		
 		examples = new Array<Dynamic>();
 		addExample('01_Hello_World');
-		//addExample('ex2');
+		addExample('02_Ascii_Maze');
 		addExample('03_Page_Hack');
 	}
 	

@@ -4,5 +4,5 @@
 -dce no
 -js ../js/dconsole.js
 -resource ../examples/01_Hello_World@01_Hello_World
--resource ../examples/02_@2
--resource ../examples/03_@3
+#-resource ../examples/02_@2
+-resource ../examples/03_Page_Hack@03_Page_Hack

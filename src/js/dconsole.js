@@ -194,12 +194,18 @@ Main.main = function() {
 Main.init = function() {
 	pgr.dconsole.DC.init();
 	pgr.dconsole.DC["eval"]("help");
+	pgr.dconsole.DC.registerClass(Std,"Std");
+	pgr.dconsole.DC.registerClass(js.Lib,"Lib");
+	pgr.dconsole.DC.registerClass(js.JQuery,"JQuery");
+	pgr.dconsole.DC.registerClass(StringTools,"StringTools");
+	pgr.dconsole.DC.registerClass(haxe.Timer,"Timer");
 	var cmds = pgr.dconsole.DC.instance.commands.commandsMap;
 	if(cmds.exists("monitor")) cmds.remove("monitor");
 	if(cmds.exists("profiler")) cmds.remove("profiler");
 	pgr.dconsole.DC.registerFunction(Main.runCode,"run","Runs the code inside the text editor");
 	Main.examples = new Array();
 	Main.addExample("01_Hello_World");
+	Main.addExample("03_Page_Hack");
 };
 Main.prepareExamples = function(codeMirror) {
 	var exList = new js.JQuery("#examples-list");
@@ -5524,7 +5530,7 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	}
 	return a1;
 };
-haxe.Resource.content = [{ name : "2", data : "RXhhbXBsZTINCi8vIFRoaXMgaXMgZXhhbXBsZTINCi8vLy8vLy8vLy8vLw0KLy8vLy8vLy8NCi8vLy8vLy8vLy8vLw"},{ name : "3", data : "RXhhbXBsZTMNCi8vLy8vLy8vLy8vLy8vLy8vLy8NCi8NCi8vLy8vLy8vLy8vLy8vLy8vLy8vDQovLw0KLy8NCi8vDQovL1dPUkRFRD8"},{ name : "01_Hello_World", data : "Ly8tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KLy8gU2ltcGxlIGhlbGxvIHdvcmxkIGV4YW1wbGUuDQovLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpmb3IoaSBpbiAwLi4uMykgew0KICAgIHRyYWNlKDMgLSBpICsgIi4uLiIpOw0KfQ0KDQp0cmFjZSgiSGVsbG8gV29ybGQhISFcbiIpOw"}];
+haxe.Resource.content = [{ name : "01_Hello_World", data : "Ly8tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KLy8gU2ltcGxlIGhlbGxvIHdvcmxkIGV4YW1wbGUuDQovLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpmb3IoaSBpbiAwLi4uMykgew0KICAgIHRyYWNlKDMgLSBpICsgIi4uLiIpOw0KfQ0KDQp0cmFjZSgiSGVsbG8gV29ybGQhISFcbiIpOw"},{ name : "03_Page_Hack", data : "Ly8tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCi8vIFBhZ2UgaGFja2luZyB1c2luZyBIYXhlIEpRdWVyeQ0KLy8tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCnZhciBsb2dvID0gbmV3IEpRdWVyeSgnI3RpdGxlLWxvZ28nKTsNCnZhciBjb250YWluZXIgPSBuZXcgSlF1ZXJ5KCcuY29udGFpbmVyLWZsdWlkJyk7DQoNCi8vIGZhZGUgb3V0IGFuZCBpbiB0aGUgbWFpbiBjb250YWluZXINCmNvbnRhaW5lci5mYWRlT3V0KDUwMCwgZnVuY3Rpb24gKCkgew0KCWNvbnRhaW5lci5mYWRlSW4oNTAwKTsNCn0pOw0KDQovLyByZW1vdmUgcHJldmlvdXMgZXZlbnQgbGlzdGVuZXJzDQpsb2dvLnVuYmluZCgpOw0KDQovLyBhZGQgbW91c2UgY2xpY2sgZXZlbnQgbGlzdGVuZXINCmxvZ28uY2xpY2soZnVuY3Rpb24gKGUpIHsNCglMaWIuYWxlcnQoIlBhZ2UgSGFja2VkISIpOw0KfSk7DQoNCm51bGw7IC8vIHByZXZlbnRzIHN0cmluZyBvdXRwdXQgZnJvbSBnb2luZyB0byB0aGUgY29uc29sZQ0K"}];
 var q = window.jQuery;
 js.JQuery = q;
 q.fn.iterator = function() {

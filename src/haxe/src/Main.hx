@@ -1,6 +1,7 @@
 package ;
 
 import haxe.PosInfos;
+import haxe.Timer;
 import js.Lib;
 import pgr.dconsole.DC;
 import pgr.dconsole.DConsole;
@@ -23,13 +24,18 @@ class Main {
 	public static function init() {
 		DC.init();
 		DC.eval('help');
+		DC.registerClass(Std, "Std");
+		DC.registerClass(Lib, "Lib");
+		DC.registerClass(JQuery, "JQuery");
+		DC.registerClass(StringTools, "StringTools");
+		DC.registerClass(Timer, "Timer");
 		
 		var cmds = DC.instance.commands.commandsMap;
 		
 		if (cmds.exists('monitor')) {
 			cmds.remove('monitor');
 		}
-		
+
 		if (cmds.exists('profiler')) {
 			cmds.remove('profiler');
 		}
@@ -39,7 +45,7 @@ class Main {
 		examples = new Array<Dynamic>();
 		addExample('01_Hello_World');
 		//addExample('ex2');
-		//addExample('ex3');
+		addExample('03_Page_Hack');
 	}
 	
 	static public function prepareExamples(codeMirror:Dynamic) {

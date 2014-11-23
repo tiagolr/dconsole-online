@@ -1,0 +1,20 @@
+//------------------------------------------
+// Page hacking using Haxe JQuery
+//------------------------------------------
+var logo = new JQuery('#title-logo');
+var container = new JQuery('.container-fluid');
+
+// fade out and in the main container
+container.fadeOut(500, function () {
+	container.fadeIn(500);
+});
+
+// remove previous event listeners
+logo.unbind();
+
+// add mouse click event listener
+logo.click(function (e) {
+	Lib.alert("Page Hacked!");
+});
+
+null; // prevents string output from going to the console

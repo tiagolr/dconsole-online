@@ -1,0 +1,19 @@
+//--------------------------------------
+// A few basic operations example
+//--------------------------------------
+var float = 1234.56;
+var string = "1234.56";
+
+// Std lib
+trace(Std.int(float));
+trace(Std.parseFloat(string));
+trace(Std.parseInt(string));
+trace(Std.random(100));
+trace(Std.string(float * 2));
+
+var map:Map<Int, String> = new Map<Int, String>();
+map.push(1, "first");
+map.push(2, "second");
+map.push(3, "third");
+
+trace(map.get(1));

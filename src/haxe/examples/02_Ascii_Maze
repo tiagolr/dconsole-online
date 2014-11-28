@@ -1,33 +1,37 @@
 //--------------------------------------
-// Simple maze example. (by sylvio sell)
+// ASCII maze example. (by sylvio sell)
 //--------------------------------------
-var genMazeSimple;
-genMazeSimple = function(m,x,y,w,h) {
+var createMaze;
+createMaze = function(m, x, y, w, h) {
     m[y][x] = ' ';
-    var d=[-2,0,0,2,2,0,0,-2];
-    while(d.length>0)
-    {
-        var i=d.splice(2*Math.floor(Math.random()*d.length/2),2);
-        var a=x+i[0];
-          var b=y+i[1];
-        if(a>0 && b>0 && a<w && b<h && m[b][a]!=' ')
+    var d = [ -2, 0, 0, 2, 2, 0, 0, -2];
+	
+    while(d.length > 0) {
+        var i = d.splice(2 * Math.floor(Math.random() * d.length / 2), 2);
+        var a = x + i[0];
+        var b = y + i[1];
+        if(a > 0 && b > 0 && a < w && b < h && m[b][a] != ' ')
         {
-              m[b-Math.floor(i[1]/2)][a-Math.floor(i[0]/2)] = ' ';
-            genMazeSimple(m,a,b,w,h);
+            m[b - Math.floor(i[1] / 2)][a - Math.floor(i[0] / 2)] = ' ';
+            createMaze(m, a, b, w, h);
         }
     }
 }
 
-var w = 23;
-var h = 11;
+var width = 23;
+var height = 11;
 var maze = [];
 
-for (y in 0...h) {
-  maze[y] = [];
-  for (x in 0...w) maze[y].push('#');
+for (y in 0...height) {
+	maze[y] = [];
+	for (x in 0...width) {
+		maze[y].push('#');
+	}
 }
 
-genMazeSimple(maze,1,1,w,h);
+createMaze(maze, 1, 1, width, height);
 
-trace('\n'+w+'x'+h+' Maze');
-for (y in 0...h) trace( maze[y].join('') );
+trace('\n' + width + 'x' + height + ' Maze');
+for (y in 0...height) {
+	trace( maze[y].join('') );
+}

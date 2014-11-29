@@ -3652,7 +3652,7 @@ hscript.Parser.prototype = {
 							this.unexpected(t);
 						}
 					} catch( e ) { if( e != "__break__" ) throw e; }
-				}
+				} else this.tokens.add(t);
 				break;
 			default:
 				this.tokens.add(t);
